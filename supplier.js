@@ -3,13 +3,16 @@
 // ============================================
 
 async function loadSupplier() {
+  const status = document.getElementById('status-supplier');
+  status.textContent = 'Memuat data supplier...';
+
   const { data, error } = await supabaseClient
     .from('supplier')
     .select('*')
     .order('id_supplier', { ascending: true });
 
   if (error) {
-    document.getElementById('status-supplier').textContent = 'Error: ' + error.message;
+    status.textContent = 'Gagal memuat supplier: ' + error.message;
     return;
   }
 
@@ -26,6 +29,9 @@ async function loadSupplier() {
       </td>
     </tr>
   `).join('');
+  status.textContent = data.length
+    ? `${data.length} data supplier berhasil dimuat.`
+    : 'Belum ada data pada tabel supplier di Supabase.';
 }
 
 async function simpanSupplier() {
