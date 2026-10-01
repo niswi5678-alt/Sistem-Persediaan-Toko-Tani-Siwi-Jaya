@@ -49,38 +49,33 @@ Nama konstanta `SUPABASE_ANON_KEY` dipertahankan demi kompatibilitas kode; nilai
 
 Buka folder proyek di VS Code, lalu buka `front end/index.html` menggunakan ekstensi Live Server. Pastikan komputer terhubung ke internet karena Supabase JavaScript dimuat dari CDN dan data diakses melalui Supabase.
 
-## 4. Unggah ke GitHub
+## 4. Unggah Perbaikan ke Repository yang Sudah Ada
 
-Buat repository kosong di GitHub, lalu jalankan perintah ini dari folder utama proyek. Ganti URL remote dengan URL repository Anda:
+Repository GitHub yang digunakan saat ini menyimpan `index.html`, `style.css`, dan file JavaScript langsung di root, berbeda dari folder `front end/` pada proyek lokal. Workflow Pages yang disediakan mendukung kedua susunan tersebut.
 
-```bash
-git init
-git add .
-git commit -m "Initial sistem persediaan toko"
-git branch -M main
-git remote add origin https://github.com/USERNAME/NAMA-REPOSITORY.git
-git push -u origin main
-```
-
-Jika repository sudah terhubung, perubahan berikutnya dapat dikirim dengan:
+Cara yang disarankan adalah membuka repository yang sudah ada melalui GitHub Desktop (**File > Clone repository**), lalu menyalin file `README.md` dan folder `.github/workflows/` dari proyek ini ke folder hasil clone. Setelah itu, buka terminal pada folder hasil clone dan jalankan:
 
 ```bash
-git add .
-git commit -m "Perbarui sistem persediaan"
-git push
+git add README.md .github/workflows/deploy-pages.yml
+git commit -m "Fix GitHub Pages asset paths"
+git push origin main
 ```
+
+Jika proyek ini memang sudah merupakan hasil clone repository, cukup jalankan tiga perintah tersebut dari folder utama proyek. Hindari `git init` atau `git remote add origin` jika repository lokal sudah memiliki remote.
 
 File `config.js` berisi URL project dan publishable key yang digunakan browser. Publishable key memang dirancang untuk penggunaan frontend, tetapi siapa pun dapat melihatnya pada aplikasi/repository publik. Keamanan data harus diterapkan dengan **Row Level Security (RLS)** dan policies yang sesuai di Supabase. Aplikasi saat ini belum memiliki autentikasi pengguna dan SQL belum mengaktifkan RLS; jangan gunakan dengan data operasional atau membuka repository/aplikasi untuk umum sebelum akses database diamankan. Jangan pernah memasukkan `service_role` atau secret key ke GitHub.
 
 ## 5. Deploy Frontend dengan GitHub Pages
 
-Workflow `.github/workflows/deploy-pages.yml` menerbitkan hanya folder `front end`, sehingga folder backend dan file lain tidak ikut disajikan sebagai website.
+Workflow `.github/workflows/deploy-pages.yml` menyiapkan website lalu menerbitkan hanya aset frontend. Workflow mendukung dua susunan: proyek lokal dengan folder `front end/`, dan repository GitHub yang menyimpan `index.html`, `style.css`, serta file JavaScript langsung di root. Pada susunan root, workflow menyalin aset ke `css/` dan `javascript/` agar sesuai dengan alamat file yang diminta oleh `index.html`.
 
-1. Push repository ke branch `main`.
+1. Pastikan perubahan dan file workflow sudah di-push ke branch `main`.
 2. Di GitHub, buka **Settings > Pages**.
-3. Pada **Build and deployment > Source**, pilih **GitHub Actions**.
-4. Buka tab **Actions** dan tunggu workflow **Deploy frontend to GitHub Pages** selesai.
-5. Alamat website akan tampil di **Settings > Pages**. Push baru ke `main` akan memicu deployment berikutnya.
+3. Pada **Build and deployment > Source**, pilih **GitHub Actions** lalu simpan bila diminta.
+4. Buka **Actions**, pilih workflow **Deploy frontend to GitHub Pages**, lalu tunggu sampai berstatus berhasil.
+5. Buka kembali alamat Pages dan muat ulang dengan `Ctrl+F5`. Push baru ke `main` akan menerbitkan website lagi.
+
+Jika tampilan website hanya teks polos, buka tab **Actions** dan pastikan workflow terbaru berstatus berhasil. Setelah workflow berhasil, muat ulang website dengan `Ctrl+F5`; jika masih polos, periksa apakah file `css/style.css` dan `javascript/config.js` tersedia pada hasil deployment.
 
 Perubahan pada `front end/javascript/config.js` harus ikut di-push agar website memakai konfigurasi Supabase yang benar.
 
