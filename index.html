@@ -159,13 +159,27 @@
       document.getElementById('masuk-tanggal').value = new Date().toISOString().split('T')[0];
       document.getElementById('keluar-tanggal').value = new Date().toISOString().split('T')[0];
 
-      window.addEventListener('DOMContentLoaded', async () => {
-        await loadSupplier();
-        await loadProduk();
-        await isiProdukDropdown();
-        await loadTransaksiMasuk();
-        await loadTransaksiKeluar();
-      });
+      const mulaiAplikasi = async () => {
+        try {
+          await loadSupplier();
+          await loadProduk();
+          await isiProdukDropdown();
+          await loadTransaksiMasuk();
+          await loadTransaksiKeluar();
+        } catch (error) {
+          const detail = error instanceof Error ? error.message : String(error);
+          document.querySelectorAll('.status').forEach((status) => {
+            status.textContent = 'Aplikasi gagal memuat data: ' + detail;
+          });
+          console.error('Gagal menginisialisasi aplikasi:', error);
+        }
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', mulaiAplikasi, { once: true });
+      } else {
+        mulaiAplikasi();
+      }
     </script>
   </body>
 </html>
