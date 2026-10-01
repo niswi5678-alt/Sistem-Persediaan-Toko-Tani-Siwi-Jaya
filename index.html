@@ -140,11 +140,44 @@
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="javascript/config.js" onerror="this.onerror=null; this.src='config.js';"></script>
-    <script src="javascript/supplier.js" onerror="this.onerror=null; this.src='supplier.js';"></script>
-    <script src="javascript/produk.js" onerror="this.onerror=null; this.src='produk.js';"></script>
-    <script src="javascript/transaksiMasuk.js" onerror="this.onerror=null; this.src='transaksiMasuk.js';"></script>
-    <script src="javascript/transaksiKeluar.js" onerror="this.onerror=null; this.src='transaksiKeluar.js';"></script>
+    <script>
+      const scriptsReady = (async () => {
+        const scripts = [
+          ['config.js', 'javascript/config.js'],
+          ['supplier.js', 'javascript/supplier.js'],
+          ['produk.js', 'javascript/produk.js'],
+          ['transaksiMasuk.js', 'javascript/transaksiMasuk.js'],
+          ['transaksiKeluar.js', 'javascript/transaksiKeluar.js']
+        ];
+
+        for (const paths of scripts) {
+          let loaded = false;
+
+          for (const path of paths) {
+            const success = await new Promise((resolve) => {
+              const script = document.createElement('script');
+              script.src = path;
+              script.async = false;
+              script.onload = () => resolve(true);
+              script.onerror = () => {
+                script.remove();
+                resolve(false);
+              };
+              document.head.appendChild(script);
+            });
+
+            if (success) {
+              loaded = true;
+              break;
+            }
+          }
+
+          if (!loaded) {
+            throw new Error('File script tidak ditemukan: ' + paths[0]);
+          }
+        }
+      })();
+    </script>
 
     <script>
       document.querySelectorAll('.tabs button').forEach((btn) => {
@@ -161,6 +194,7 @@
 
       const mulaiAplikasi = async () => {
         try {
+          await scriptsReady;
           await loadSupplier();
           await loadProduk();
           await isiProdukDropdown();
