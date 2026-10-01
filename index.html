@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistem Persediaan Toko Tani Siwi Maju</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>🌱 Sistem Persediaan Toko Tani Siwi Maju</h1>
+    </header>
+
+    <div class="tabs">
+      <button class="active" data-tab="supplier">Supplier</button>
+      <button data-tab="produk">Produk</button>
+      <button data-tab="masuk">Transaksi Masuk</button>
+      <button data-tab="keluar">Transaksi Keluar</button>
+    </div>
+
+    <section id="panel-supplier" class="panel active">
+      <h2>Data Supplier</h2>
+      <div class="form-grid">
+        <input type="hidden" id="supplier-id" />
+        <input type="text" id="supplier-nama" placeholder="Nama Supplier" />
+        <input type="text" id="supplier-telepon" placeholder="Telepon" />
+        <input type="text" id="supplier-alamat" placeholder="Alamat" />
+      </div>
+      <div class="action-row">
+        <button class="btn-primary" onclick="simpanSupplier()">Simpan</button>
+        <button class="btn-secondary" onclick="resetSupplier()">Reset</button>
+      </div>
+      <div class="status" id="status-supplier"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Telepon</th>
+            <th>Alamat</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-supplier"></tbody>
+      </table>
+    </section>
+
+    <section id="panel-produk" class="panel">
+      <h2>Data Produk</h2>
+      <div class="form-grid">
+        <input type="hidden" id="produk-id" />
+        <input type="text" id="produk-kode" placeholder="Kode Produk" />
+        <input type="text" id="produk-nama" placeholder="Nama Produk" />
+        <select id="produk-supplier"></select>
+        <input type="text" id="produk-kategori" placeholder="Kategori" />
+        <input type="text" id="produk-satuan" placeholder="Satuan (kg, pack, dus)" />
+        <input type="number" id="produk-harga-beli" placeholder="Harga Beli" min="0" step="100" />
+        <input type="number" id="produk-harga-jual" placeholder="Harga Jual" min="0" step="100" />
+        <input type="number" id="produk-stok" placeholder="Stok Awal" min="0" step="1" />
+      </div>
+      <div class="action-row">
+        <button class="btn-primary" onclick="simpanProduk()">Simpan</button>
+        <button class="btn-secondary" onclick="resetProduk()">Reset</button>
+      </div>
+      <div class="status" id="status-produk"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Kode</th>
+            <th>Nama</th>
+            <th>Supplier</th>
+            <th>Kategori</th>
+            <th>Harga Beli</th>
+            <th>Harga Jual</th>
+            <th>Stok</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-produk"></tbody>
+      </table>
+    </section>
+
+    <section id="panel-masuk" class="panel">
+      <h2>Transaksi Masuk</h2>
+      <div class="form-grid">
+        <select id="masuk-produk"></select>
+        <input type="date" id="masuk-tanggal" />
+        <input type="number" id="masuk-jumlah" placeholder="Jumlah" min="1" step="1" />
+        <input type="number" id="masuk-harga-beli" placeholder="Harga Beli" min="0" step="100" />
+      </div>
+      <div class="action-row">
+        <button class="btn-primary" onclick="simpanTransaksiMasuk()">Simpan</button>
+        <button class="btn-secondary" onclick="resetTransaksiMasuk()">Reset</button>
+      </div>
+      <div class="status" id="status-masuk"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Produk</th>
+            <th>Tanggal</th>
+            <th>Jumlah</th>
+            <th>Harga Beli</th>
+            <th>Total</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-masuk"></tbody>
+      </table>
+    </section>
+
+    <section id="panel-keluar" class="panel">
+      <h2>Transaksi Keluar</h2>
+      <div class="form-grid">
+        <select id="keluar-produk"></select>
+        <input type="date" id="keluar-tanggal" />
+        <input type="number" id="keluar-jumlah" placeholder="Jumlah" min="1" step="1" />
+        <input type="number" id="keluar-harga-jual" placeholder="Harga Jual" min="0" step="100" />
+      </div>
+      <div class="action-row">
+        <button class="btn-primary" onclick="simpanTransaksiKeluar()">Simpan</button>
+        <button class="btn-secondary" onclick="resetTransaksiKeluar()">Reset</button>
+      </div>
+      <div class="status" id="status-keluar"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Produk</th>
+            <th>Tanggal</th>
+            <th>Jumlah</th>
+            <th>Harga Jual</th>
+            <th>Total</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-keluar"></tbody>
+      </table>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="javascript/config.js"></script>
+    <script src="javascript/supplier.js"></script>
+    <script src="javascript/produk.js"></script>
+    <script src="javascript/transaksiMasuk.js"></script>
+    <script src="javascript/transaksiKeluar.js"></script>
+
+    <script>
+      document.querySelectorAll('.tabs button').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tabs button').forEach((b) => b.classList.remove('active'));
+          document.querySelectorAll('.panel').forEach((panel) => panel.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+        });
+      });
+
+      document.getElementById('masuk-tanggal').value = new Date().toISOString().split('T')[0];
+      document.getElementById('keluar-tanggal').value = new Date().toISOString().split('T')[0];
+
+      window.addEventListener('DOMContentLoaded', async () => {
+        await loadSupplier();
+        await loadProduk();
+        await isiProdukDropdown();
+        await loadTransaksiMasuk();
+        await loadTransaksiKeluar();
+      });
+    </script>
+  </body>
+</html>
