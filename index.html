@@ -12,13 +12,107 @@
     </header>
 
     <div class="tabs">
-      <button class="active" data-tab="supplier">Supplier</button>
+      <button class="active" data-tab="ringkasan">Ringkasan</button>
+      <button data-tab="supplier">Supplier</button>
       <button data-tab="produk">Produk</button>
       <button data-tab="masuk">Transaksi Masuk</button>
       <button data-tab="keluar">Transaksi Keluar</button>
     </div>
 
-    <section id="panel-supplier" class="panel active">
+    <section id="panel-ringkasan" class="panel active dashboard-panel">
+      <div class="section-top">
+        <div>
+          <p class="eyebrow">IKHTISAR TOKO</p>
+          <h2>Ringkasan persediaan</h2>
+          <p class="section-description">Pantau stok dan pergerakan uang dari transaksi barang.</p>
+        </div>
+        <label class="period-control" for="ringkasan-periode">
+          Periode
+          <select id="ringkasan-periode">
+            <option value="all">Semua waktu</option>
+            <option value="month">Bulan ini</option>
+            <option value="year">Tahun ini</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="cash-summary">
+        <div class="cash-summary-main">
+          <p class="eyebrow">ARUS KAS BERSIH</p>
+          <p class="cash-amount" id="ringkasan-bersih">Rp 0</p>
+          <p class="cash-caption" id="ringkasan-keterangan">Menghitung transaksi...</p>
+        </div>
+        <div class="cash-flow-visual" aria-label="Perbandingan kas masuk dan kas keluar">
+          <div class="flow-line">
+            <span>Kas masuk</span>
+            <strong id="ringkasan-masuk-label">Rp 0</strong>
+          </div>
+          <div class="flow-track"><span id="ringkasan-masuk-bar"></span></div>
+          <div class="flow-line">
+            <span>Kas keluar</span>
+            <strong id="ringkasan-keluar-label">Rp 0</strong>
+          </div>
+          <div class="flow-track flow-track-out"><span id="ringkasan-keluar-bar"></span></div>
+        </div>
+      </div>
+
+      <div class="metric-grid">
+        <article class="metric-card metric-in">
+          <span class="metric-label">Kas masuk · Penjualan</span>
+          <strong id="ringkasan-masuk">Rp 0</strong>
+          <span class="metric-note">Dari transaksi barang keluar</span>
+        </article>
+        <article class="metric-card metric-out">
+          <span class="metric-label">Kas keluar · Pembelian stok</span>
+          <strong id="ringkasan-keluar">Rp 0</strong>
+          <span class="metric-note">Dari transaksi barang masuk</span>
+        </article>
+        <article class="metric-card metric-stock">
+          <span class="metric-label">Jumlah persediaan</span>
+          <strong id="ringkasan-stok">0</strong>
+          <span class="metric-note">Total unit dari semua produk</span>
+        </article>
+        <article class="metric-card metric-alert">
+          <span class="metric-label">Produk perlu dicek</span>
+          <strong id="ringkasan-stok-rendah">0</strong>
+          <span class="metric-note">Stok 5 unit atau kurang</span>
+        </article>
+      </div>
+
+      <div class="summary-lower">
+        <section class="summary-block">
+          <div class="block-heading">
+            <div>
+              <p class="eyebrow">AKTIVITAS TERBARU</p>
+              <h3>Arus kas</h3>
+            </div>
+            <span class="small-note">Maks. 8 transaksi</span>
+          </div>
+          <div class="table-wrap">
+            <table class="activity-table">
+              <thead>
+                <tr><th>Tanggal</th><th>Jenis</th><th>Produk</th><th>Nilai</th></tr>
+              </thead>
+              <tbody id="tbody-ringkasan"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <aside class="summary-note">
+          <p class="eyebrow">CARA BACA</p>
+          <h3>Penjualan menambah kas</h3>
+          <p>Total transaksi keluar dihitung sebagai kas masuk penjualan. Total transaksi masuk dihitung sebagai kas keluar pembelian stok.</p>
+          <p class="note-foot">Ini ringkasan arus transaksi, bukan saldo kas aktual. Saldo awal, utang/piutang, dan biaya lain belum termasuk.</p>
+          <div class="entity-counts">
+            <div><span>Supplier</span><strong id="ringkasan-supplier">0</strong></div>
+            <div><span>Produk</span><strong id="ringkasan-produk">0</strong></div>
+          </div>
+        </aside>
+      </div>
+      <div class="status" id="status-ringkasan" role="status" aria-live="polite"></div>
+    </section>
+
+    <section id="panel-supplier" class="panel">
       <h2>Data Supplier</h2>
       <div class="form-grid">
         <input type="hidden" id="supplier-id" />
@@ -147,7 +241,8 @@
           ['supplier.js', 'javascript/supplier.js'],
           ['produk.js', 'javascript/produk.js'],
           ['transaksiMasuk.js', 'javascript/transaksiMasuk.js'],
-          ['transaksiKeluar.js', 'javascript/transaksiKeluar.js']
+          ['transaksiKeluar.js', 'javascript/transaksiKeluar.js'],
+          ['ringkasan.js', 'javascript/ringkasan.js']
         ];
 
         for (const paths of scripts) {
@@ -200,6 +295,8 @@
           await isiProdukDropdown();
           await loadTransaksiMasuk();
           await loadTransaksiKeluar();
+          pasangFilterRingkasan();
+          await loadRingkasan();
         } catch (error) {
           const detail = error instanceof Error ? error.message : String(error);
           document.querySelectorAll('.status').forEach((status) => {
